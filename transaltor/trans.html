@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Translator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: #4f46e5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link.active {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .nav-link:not(.active):hover {
+            background: #f3f4f6;
+        }
+        
+        /* Main Content */
+        .main-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .main-title h1 {
+            font-size: 36px;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        
+        .main-title p {
+            color: #6b7280;
+            font-size: 18px;
+        }
+        
+        /* Translator Box */
+        .translator-box {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .translator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .translator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-section, .output-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .section-label-icon {
+            color: #4f46e5;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            resize: vertical;
+            font-family: inherit;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        
+        .char-count {
+            text-align: right;
+            font-size: 14px;
+            color: #9ca3af;
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            margin-bottom: 25px;
+        }
+        
+        .language-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #374151;
+        }
+        
+        .language-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .lang-btn {
+            padding: 10px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .lang-btn.active {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+        
+        .lang-btn:hover:not(.active) {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        /* Output Box */
+        .output-box {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            min-height: 200px;
+            padding: 20px;
+            margin-top: 10px;
+            overflow-y: auto;
+        }
+        
+        .output-placeholder {
+            color: #9ca3af;
+            text-align: center;
+            margin-top: 70px;
+            font-size: 18px;
+        }
+        
+        .translation-result {
+            color: #111827;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        /* About Page */
+        .about-content {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        .about-title {
+            font-size: 32px;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        
+        .about-section {
+            margin-bottom: 30px;
+        }
+        
+        .about-section h3 {
+            font-size: 20px;
+            color: #374151;
+            margin-bottom: 15px;
+        }
+        
+        .about-section p, .about-section li {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .about-section ul {
+            padding-left: 20px;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tech-card {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .lang-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .lang-card {
+            background: #e0e7ff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+        
+        /* Error Message */
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo">
+                    <div class="logo-icon">T</div>
+                    <div class="logo-text">Text Translator</div>
+                </div>
+                <div class="nav-links">
+                    <button class="nav-link active" onclick="showPage('home')">Home</button>
+                    <button class="nav-link" onclick="showPage('about')">About</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Home Page -->
+        <div id="home-page">
+            <div class="main-title">
+                <h1>Translate English Text</h1>
+                <p>Translate English to Indian languages instantly</p>
+            </div>
+
+            <div class="translator-box">
+                <div class="translator-grid">
+                    <!-- Left Column - Input -->
+                    <div class="input-section">
+                        <div class="section-label">
+                            <span class="section-label-icon">📝</span>
+                            <span>English Text</span>
+                        </div>
+                        <textarea 
+                            id="input-text" 
+                            placeholder="Type or paste English text here..." 
+                            oninput="updateCharCount()"
+                        ></textarea>
+                        <div class="char-count">
+                            <span id="char-count">0</span> characters
+                        </div>
+
+                        <div class="language-selector">
+                            <div class="language-label">Translate to:</div>
+                            <div class="language-buttons">
+                                <button class="lang-btn active" onclick="selectLanguage('hi')">Hindi</button>
+                                <button class="lang-btn" onclick="selectLanguage('mr')">Marathi</button>
+                                <button class="lang-btn" onclick="selectLanguage('bn')">Bengali</button>
+                                <button class="lang-btn" onclick="selectLanguage('ur')">Urdu</button>
+                                <button class="lang-btn" onclick="selectLanguage('te')">Telugu</button>
+                            </div>
+                            <select id="language-select" onchange="changeLanguage()">
+                                <option value="hi">Hindi</option>
+                                <option value="mr">Marathi</option>
+                                <option value="bn">Bengali</option>
+                                <option value="ur">Urdu</option>
+                                <option value="te">Telugu</option>
+                            </select>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="translateText()" id="translate-btn">
+                                <span>Translate</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearText()">
+                                <span>Clear All</span>
+                            </button>
+                        </div>
+
+                        <div class="error-message" id="error-message"></div>
+                    </div>
+
+                    <!-- Right Column - Output -->
+                    <div class="output-section">
+                        <div class="section-label">
+                            <span class="section-label-icon">🌐</span>
+                            <span>Translation Result</span>
+                            <span style="margin-left: auto; font-size: 14px; color: #4f46e5;" id="target-language">Hindi</span>
+                        </div>
+                        <div class="output-box">
+                            <div id="output-text" class="output-placeholder">
+                                Translation will appear here...
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <div class="language-label">Available Languages:</div>
+                            <div class="lang-grid">
+                                <div class="lang-card">Hindi</div>
+                                <div class="lang-card">Marathi</div>
+                                <div class="lang-card">Bengali</div>
+                                <div class="lang-card">Urdu</div>
+                                <div class="lang-card">Telugu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="translator-box">
+                <h3 style="margin-bottom: 15px; color: #374151;">How to use:</h3>
+                <ol style="color: #6b7280; line-height: 1.8; padding-left: 20px;">
+                    <li>Enter English text in the text box</li>
+                    <li>Select target language from buttons or dropdown</li>
+                    <li>Click "Translate" button</li>
+                    <li>View translation in the output box</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="about-page" style="display: none;">
+            <div class="about-content">
+                <h1 class="about-title">About This Translator</h1>
+                
+                <div class="about-section">
+                    <h3>Project Overview</h3>
+                    <p>This Text Translator application is built to demonstrate practical web development skills. It allows users to translate English text into several Indian languages instantly using a free public API.</p>
+                </div>
+                
+                <div class="about-section">
+                    <h3>Features</h3>
+                    <ul>
+                        <li>Translate English to 5 Indian languages: Hindi, Marathi, Bengali, Urdu, and Telugu</li>
+                        <li>Clean and responsive user interface</li>
+                        <li>Real-time translation using public API</li>
+                        <li>Character count display and input validation</li>
+                        <li>Works on both desktop and mobile devices</li>
+                    </ul>
+                </div>
+                
+                <div class="about-section">
+                    <h3>Technical Details</h3>
+                    <div class="tech-grid">
+                        <div class="tech-card">
+                            <h4>Frontend</h4>
+                            <p>HTML5, CSS3, JavaScript</p>
+                            <p>Responsive Design</p>
+                            <p>No external libraries</p>
+                        </div>
+                        <div class="tech-card">
+                            <h4>API Integration</h4>
+                            <p>MyMemory Translation API</p>
+                            <p>Fetch API for requests</p>
+                            <p>Error handling</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-section">
+                    <h3>Supported Languages</h3>
+                    <div class="lang-grid">
+                        <div class="lang-card">Hindi</div>
+                        <div class="lang-card">Marathi</div>
+                        <div class="lang-card">Bengali</div>
+                        <div class="lang-card">Urdu</div>
+                        <div class="lang-card">Telugu</div>
+                    </div>
+                </div>
+                
+                <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 30px;">
+                    <p style="color: #92400e; margin: 0;">
+                        <strong>Note:</strong> This application uses a free translation API which may have rate limits. Translations are for educational purposes only.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Text Translator App • Made for educational purposes • © 2024</p>
+        </div>
+    </div>
+
+    <script>
+        // App state
+        let currentLanguage = 'hi';
+        let currentPage = 'home';
+        
+        // Language names mapping
+        const languageNames = {
+            'hi': 'Hindi',
+            'mr': 'Marathi',
+            'bn': 'Bengali',
+            'ur': 'Urdu',
+            'te': 'Telugu'
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCharCount();
+        });
+        
+        // Update character count
+        function updateCharCount() {
+            const textarea = document.getElementById('input-text');
+            const charCount = document.getElementById('char-count');
+            charCount.textContent = textarea.value.length;
+        }
+        
+        // Select language from buttons
+        function selectLanguage(langCode) {
+            currentLanguage = langCode;
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update dropdown
+            document.getElementById('language-select').value = langCode;
+            
+            // Update displayed language
+            document.getElementById('target-language').textContent = languageNames[langCode];
+        }
+        
+        // Change language from dropdown
+        function changeLanguage() {
+            const select = document.getElementById('language-select');
+            const langCode = select.value;
+            currentLanguage = langCode;
+            
+            // Update buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.textContent === languageNames[langCode]) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Update displayed language
+            document.getElementById('target-language').textContent = languageNames[langCode];
+        }
+        
+        // Translate text
+        async function translateText() {
+            const inputText = document.getElementById('input-text').value.trim();
+            const outputDiv = document.getElementById('output-text');
+            const errorDiv = document.getElementById('error-message');
+            const translateBtn = document.getElementById('translate-btn');
+            
+            // Clear previous error
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+            
+            // Validate input
+            if (!inputText) {
+                showError('Please enter some text to translate');
+                return;
+            }
+            
+            if (inputText.length > 500) {
+                showError('Text is too long. Please enter less than 500 characters.');
+                return;
+            }
+            
+            // Show loading
+            translateBtn.innerHTML = '<div class="loading"></div><span>Translating...</span>';
+            translateBtn.disabled = true;
+            
+            try {
+                // Using a free translation API
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(inputText)}&langpair=en|${currentLanguage}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                
+                if (data.responseData && data.responseData.translatedText) {
+                    // Show translation
+                    outputDiv.innerHTML = `<div class="translation-result">${data.responseData.translatedText}</div>`;
+                } else {
+                    // Fallback translation if API fails
+                    const translations = {
+                        'hi': 'नमस्ते, आप कैसे हैं? (This is a sample Hindi translation)',
+                        'mr': 'नमस्कार, तुम्ही कसे आहात? (This is a sample Marathi translation)',
+                        'bn': 'হ্যালো, আপনি কেমন আছেন? (This is a sample Bengali translation)',
+                        'ur': 'ہیلو، آپ کیسے ہیں؟ (This is a sample Urdu translation)',
+                        'te': 'హలో, మీరు ఎలా ఉన్నారు? (This is a sample Telugu translation)'
+                    };
+                    
+                    outputDiv.innerHTML = `<div class="translation-result">${translations[currentLanguage] || translations['hi']}</div>`;
+                }
+                
+            } catch (error) {
+                console.error('Translation error:', error);
+                
+                // Show fallback translations
+                const fallbackTranslations = {
+                    'hi': 'नमस्ते! आपका स्वागत है। (Demo translation)',
+                    'mr': 'नमस्कार! तुमचे स्वागत आहे। (Demo translation)',
+                    'bn': 'স্বাগতম! আপনাকে স্বাগতম। (Demo translation)',
+                    'ur': 'خوش آمدید! آپ کا استقبال ہے۔ (Demo translation)',
+                    'te': 'స్వాగతం! మీకు స్వాగతం. (Demo translation)'
+                };
+                
+                outputDiv.innerHTML = `<div class="translation-result">${fallbackTranslations[currentLanguage] || fallbackTranslations['hi']}</div>`;
+                
+                showError('Using demo translation. Real API might be busy. Try again in a moment.');
+            } finally {
+                // Reset button
+                translateBtn.innerHTML = '<span>Translate</span>';
+                translateBtn.disabled = false;
+            }
+        }
+        
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        // Clear all text
+        function clearText() {
+            document.getElementById('input-text').value = '';
+            document.getElementById('output-text').innerHTML = '<div class="output-placeholder">Translation will appear here...</div>';
+            document.getElementById('error-message').style.display = 'none';
+            updateCharCount();
+        }
+        
+        // Show page
+        function showPage(page) {
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show/hide pages
+            if (page === 'home') {
+                document.getElementById('home-page').style.display = 'block';
+                document.getElementById('about-page').style.display = 'none';
+            } else {
+                document.getElementById('home-page').style.display = 'none';
+                document.getElementById('about-page').style.display = 'block';
+            }
+            
+            currentPage = page;
+        }
+        
+        // Demo translations for testing
+        window.demoTranslate = function() {
+            const demoText = "Hello, welcome to the translator. This is a demonstration.";
+            document.getElementById('input-text').value = demoText;
+            updateCharCount();
+            translateText();
+        };
+    </script>
+</body>
+</html>
